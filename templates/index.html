@@ -90,7 +90,7 @@
         function startGame() {
             username = document.getElementById("username").value.trim();
             if (!username) {
-                alert("Please enter a name!");
+                alert("Please enter your name!");
                 return;
             }
             document.body.innerHTML = `
@@ -144,13 +144,13 @@
                 score += 20;
                 correctAnswers++;
                 questionIndex++;
-                setTimeout(displayQuestion, 600); // 0.5s delay before next question
+                setTimeout(displayQuestion, 300); // 0.3s delay before next question
             } else {
                 score -= 5;
                 wrongAnswers++;
                 speak(`Wrong! The correct answer is: ${correctAnswer}`, () => {
                     questionIndex++;
-                    setTimeout(displayQuestion, 600); // 0.5s delay before next question
+                    setTimeout(displayQuestion, 300); // 0.3s delay before next question
                 });
             }
         }
