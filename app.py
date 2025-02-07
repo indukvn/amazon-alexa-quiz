@@ -14,7 +14,16 @@ questions_pool = [
     {"question": "What is the name of Amazon's video streaming service?", "answer": "prime video"},
     {"question": "What is Amazon's AI chatbot for customer service?", "answer": "amazon q"},
     {"question": "Which Amazon device helps control smart home devices?", "answer": "echo"},
-    {"question": "What is the name of Amazon's cashier-less stores?", "answer": "amazon go"}
+    {"question": "What is the name of Amazon's cashier-less stores?", "answer": "amazon go"},
+    {"question": "Which day is Amazon's biggest annual sales event?", "answer": "prime day"},
+    {"question": "Which company did Amazon acquire in 2017 for $13.7 billion?", "answer": "whole foods"},
+    {"question": "What is the main color of Amazon's logo?", "answer": "Orange"},
+    {"question": "What is the name of Amazon's AI-powered recommendation algorithm?", "answer": "a9"},
+    {"question": "Which day is Amazon's biggest annual sales event?", "answer": "prime day"},
+    {"question": "What is the name of Amazon's charity donation program?", "answer": "Smile"},
+    {"question": "What is the name of Amazon's online game streaming platform?", "answer": "Twitch"},
+    {"question": "Which Amazon warehouse robotics company was acquired in 2012?", "answer": "Kiva"},
+    
 ]
 
 def get_random_questions():
