@@ -66,6 +66,7 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 20px;
+            display: none;
         }
 
         .gold { color: gold; font-size: 22px; font-weight: bold; transform: scale(1.1); }
@@ -73,7 +74,7 @@
         .bronze { color: #CD7F32; font-size: 18px; font-weight: bold; transform: scale(1.02); }
     </style>
     <script>
-        let username = "", score = 0, correctAnswers = 0, wrongAnswers = 0, questionIndex = 0, questions = [];
+        let username = "", score = 0, correctAnswers = 0, wrongAnswers = 0, questionIndex = 0, questions = [], gameFinished = false;
 
         function showNameInput() {
             document.body.innerHTML = `
@@ -90,17 +91,19 @@
         function startGame() {
             username = document.getElementById("username").value.trim();
             if (!username) {
-                alert("Please enter your name!");
+                alert("Please enter a name!");
                 return;
             }
+            gameFinished = false; // Reset game completion flag
             document.body.innerHTML = `
                 <h2>Amazon Quiz 🎤</h2>
                 <div class="container">
                     <p id="question"></p>
                     <input type="text" id="answerInput" placeholder="Type your answer here">
                     <button onclick="checkAnswer()">Submit Answer</button>
+                    <button onclick="fetchScores()">View Leaderboard</button>
                 </div>
-                <div class="leaderboard" id="leaderboard" style="display: none;">
+                <div class="leaderboard" id="leaderboard">
                     <h3>Leaderboard 🏆</h3>
                 </div>
             `;
@@ -121,7 +124,7 @@
             }
             document.getElementById("question").innerText = questions[questionIndex].question;
             document.getElementById("answerInput").value = "";
-            speak(questions[questionIndex].question);  // Alexa voice reads the question
+            speak(questions[questionIndex].question);
         }
 
         function speak(text, callback) {
@@ -144,40 +147,43 @@
                 score += 20;
                 correctAnswers++;
                 questionIndex++;
-                setTimeout(displayQuestion, 200); // 0.2s delay before next question
+                setTimeout(displayQuestion, 150);
             } else {
                 score -= 5;
                 wrongAnswers++;
                 speak(`Wrong! The correct answer is: ${correctAnswer}`, () => {
                     questionIndex++;
-                    setTimeout(displayQuestion, 200); // 0.2s delay before next question
+                    setTimeout(displayQuestion, 150);
                 });
             }
         }
 
         function endQuiz() {
-            speak(`Game Over! You scored ${score} points with ${correctAnswers} correct and ${wrongAnswers} wrong answers.`, fetchScores);
+            gameFinished = true; // Mark game as finished to prevent duplicate scores
+            speak(`Game Over! You scored ${score} points with ${correctAnswers} correct and ${wrongAnswers} wrong answers.`, saveScore);
         }
 
-        function fetchScores() {
+        function saveScore() {
             fetch("/submit_score", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, score })
-            }).then(() => {
-                fetch("/get_scores").then(res => res.json()).then(data => {
-                    let leaderboardHTML = "<h3>Leaderboard 🏆</h3>";
-                    data.forEach((player, index) => {
-                        let rankClass = "";
-                        let tagline = "";
-                        if (index === 0) { rankClass = "gold"; tagline = "🥇 Amazing Amazonian"; }
-                        else if (index === 1) { rankClass = "silver"; tagline = "🥈 Attentive Amazonian"; }
-                        else if (index === 2) { rankClass = "bronze"; tagline = "🥉 Alluring Amazonian"; }
-                        leaderboardHTML += `<p class="${rankClass}">${player.username}: ${player.score} ${tagline}</p>`;
-                    });
-                    document.getElementById("leaderboard").innerHTML = leaderboardHTML;
-                    document.getElementById("leaderboard").style.display = "block";
+            }).then(fetchScores);
+        }
+
+        function fetchScores() {
+            fetch("/get_scores").then(res => res.json()).then(data => {
+                let leaderboardHTML = "<h3>Leaderboard 🏆</h3>";
+                data.forEach((player, index) => {
+                    let rankClass = "";
+                    let tagline = "";
+                    if (index === 0) { rankClass = "gold"; tagline = "🥇 Amazing Amazonian"; }
+                    else if (index === 1) { rankClass = "silver"; tagline = "🥈 Attentive Amazonian"; }
+                    else if (index === 2) { rankClass = "bronze"; tagline = "🥉 Alluring Amazonian"; }
+                    leaderboardHTML += `<p class="${rankClass}">${player.username}: ${player.score} ${tagline}</p>`;
                 });
+                document.getElementById("leaderboard").innerHTML = leaderboardHTML;
+                document.getElementById("leaderboard").style.display = "block";
             });
         }
 
