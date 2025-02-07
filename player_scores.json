@@ -1,14 +1,14 @@
 [
     {
         "username": "Test1",
-        "score": 0
+        "score": -50
     },
     {
         "username": "Test2",
-        "score": -25
+        "score": -50
     },
     {
         "username": "Test3",
-        "score": -5
+        "score": -50
     }
 ]
