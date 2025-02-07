@@ -20,9 +20,9 @@ questions_pool = [
     {"question": "What is the main color of Amazon's logo?", "answer": "Orange"},
     {"question": "What is the name of Amazon's AI-powered recommendation algorithm?", "answer": "a9"},
     {"question": "Which day is Amazon's biggest annual sales event?", "answer": "prime day"},
-    {"question": "What is the name of Amazon's charity donation program?", "answer": "Smile"},
-    {"question": "What is the name of Amazon's online game streaming platform?", "answer": "Twitch"},
-    {"question": "Which Amazon warehouse robotics company was acquired in 2012?", "answer": "Kiva"},
+    {"question": "What is the name of Amazon's charity donation program?", "answer": "smile"},
+    {"question": "What is the name of Amazon's online game streaming platform?", "answer": "twitch"},
+    {"question": "Which Amazon warehouse robotics company was acquired in 2012?", "answer": "kiva"},
     
 ]
 
