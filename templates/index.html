@@ -144,13 +144,13 @@
                 score += 20;
                 correctAnswers++;
                 questionIndex++;
-                setTimeout(displayQuestion, 300); // 0.3s delay before next question
+                setTimeout(displayQuestion, 200); // 0.2s delay before next question
             } else {
                 score -= 5;
                 wrongAnswers++;
                 speak(`Wrong! The correct answer is: ${correctAnswer}`, () => {
                     questionIndex++;
-                    setTimeout(displayQuestion, 300); // 0.3s delay before next question
+                    setTimeout(displayQuestion, 200); // 0.2s delay before next question
                 });
             }
         }
