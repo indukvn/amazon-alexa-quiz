@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #232F3E;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+            width: 80%;
+            max-width: 500px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        img {
+            width: 200px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        button {
+            background-color: #FF9900;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            font-size: 18px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #E88B00;
+        }
+
+        .leaderboard {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .gold { color: gold; font-size: 22px; font-weight: bold; transform: scale(1.1); }
+        .silver { color: silver; font-size: 20px; font-weight: bold; transform: scale(1.05); }
+        .bronze { color: #CD7F32; font-size: 18px; font-weight: bold; transform: scale(1.02); }
+    </style>
+    <script>
+        let username = "", score = 0, correctAnswers = 0, wrongAnswers = 0, questionIndex = 0, questions = [];
+
+        function showNameInput() {
+            document.body.innerHTML = `
+                <div class="container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo">
+                    <h2>Welcome to Amazon Quiz 🎤</h2>
+                    <p>Enter your name to start:</p>
+                    <input type="text" id="username" placeholder="Enter your name">
+                    <button onclick="startGame()">Start Quiz</button>
+                </div>
+            `;
+        }
+
+        function startGame() {
+            username = document.getElementById("username").value.trim();
+            if (!username) {
+                alert("Please enter a name!");
+                return;
+            }
+            document.body.innerHTML = `
+                <h2>Amazon Quiz 🎤</h2>
+                <div class="container">
+                    <p id="question"></p>
+                    <input type="text" id="answerInput" placeholder="Type your answer here">
+                    <button onclick="checkAnswer()">Submit Answer</button>
+                </div>
+                <div class="leaderboard" id="leaderboard" style="display: none;">
+                    <h3>Leaderboard 🏆</h3>
+                </div>
+            `;
+            fetchQuestions();
+        }
+
+        function fetchQuestions() {
+            fetch("/get_questions").then(res => res.json()).then(data => {
+                questions = data;
+                displayQuestion();
+            });
+        }
+
+        function displayQuestion() {
+            if (questionIndex >= questions.length) {
+                endQuiz();
+                return;
+            }
+            document.getElementById("question").innerText = questions[questionIndex].question;
+            document.getElementById("answerInput").value = "";
+            speak(questions[questionIndex].question);  // Alexa voice reads the question
+        }
+
+        function speak(text, callback) {
+            let speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            speech.voice = window.speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("alexa")) || window.speechSynthesis.getVoices()[0];
+
+            speech.onend = () => {
+                if (callback) callback();
+            };
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        function checkAnswer() {
+            let userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+            let correctAnswer = questions[questionIndex].answer.toLowerCase();
+
+            if (userAnswer === correctAnswer) {
+                score += 20;
+                correctAnswers++;
+                questionIndex++;
+                setTimeout(displayQuestion, 600); // 0.5s delay before next question
+            } else {
+                score -= 5;
+                wrongAnswers++;
+                speak(`Wrong! The correct answer is: ${correctAnswer}`, () => {
+                    questionIndex++;
+                    setTimeout(displayQuestion, 600); // 0.5s delay before next question
+                });
+            }
+        }
+
+        function endQuiz() {
+            speak(`Game Over! You scored ${score} points with ${correctAnswers} correct and ${wrongAnswers} wrong answers.`, fetchScores);
+        }
+
+        function fetchScores() {
+            fetch("/submit_score", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, score })
+            }).then(() => {
+                fetch("/get_scores").then(res => res.json()).then(data => {
+                    let leaderboardHTML = "<h3>Leaderboard 🏆</h3>";
+                    data.forEach((player, index) => {
+                        let rankClass = "";
+                        let tagline = "";
+                        if (index === 0) { rankClass = "gold"; tagline = "🥇 Amazing Amazonian"; }
+                        else if (index === 1) { rankClass = "silver"; tagline = "🥈 Attentive Amazonian"; }
+                        else if (index === 2) { rankClass = "bronze"; tagline = "🥉 Alluring Amazonian"; }
+                        leaderboardHTML += `<p class="${rankClass}">${player.username}: ${player.score} ${tagline}</p>`;
+                    });
+                    document.getElementById("leaderboard").innerHTML = leaderboardHTML;
+                    document.getElementById("leaderboard").style.display = "block";
+                });
+            });
+        }
+
+        window.onload = function () {
+            setTimeout(() => window.speechSynthesis.getVoices()); // Preload voices
+            showNameInput();
+        };
+    </script>
+</head>
+<body>
+</body>
+</html>
