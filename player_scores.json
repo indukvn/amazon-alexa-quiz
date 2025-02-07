@@ -1,1 +1,14 @@
-
+[
+    {
+        "username": "Test1",
+        "score": 0
+    },
+    {
+        "username": "Test2",
+        "score": -25
+    },
+    {
+        "username": "Test3",
+        "score": -5
+    }
+]
