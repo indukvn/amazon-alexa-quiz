@@ -5,16 +5,16 @@ app = Flask(__name__)
 SCORES_FILE = "player_scores.json"
 
 questions_pool = [
-    {"question": "Question: What year was Amazon founded?", "answer": "1994"},
-    {"question": "Question: Who is the CEO of Amazon?", "answer": "andy jassy"},
-    {"question": "Question: What is the name of Amazon's voice assistant?", "answer": "alexa"},
-    {"question": "Question: What is Amazon's cloud computing service called?", "answer": "aws"},
-    {"question": "Question: Where is Amazon's headquarters located?", "answer": "seattle"},
-    {"question": "Question: What was Amazon originally known for selling?", "answer": "books"},
-    {"question": "Question: What is the name of Amazon's video streaming service?", "answer": "prime video"},
-    {"question": "Question: What is Amazon's AI chatbot for customer service?", "answer": "amazon q"},
-    {"question": "Question: Which Amazon device helps control smart home devices?", "answer": "echo"},
-    {"question": "Question: What is the name of Amazon's cashier-less stores?", "answer": "amazon go"}
+    {"question": "What year was Amazon founded?", "answer": "1994"},
+    {"question": "Who is the CEO of Amazon?", "answer": "andy jassy"},
+    {"question": "What is the name of Amazon's voice assistant?", "answer": "alexa"},
+    {"question": "What is Amazon's cloud computing service called?", "answer": "aws"},
+    {"question": "Where is Amazon's headquarters located?", "answer": "seattle"},
+    {"question": "What was Amazon originally known for selling?", "answer": "books"},
+    {"question": "What is the name of Amazon's video streaming service?", "answer": "prime video"},
+    {"question": "What is Amazon's AI chatbot for customer service?", "answer": "amazon q"},
+    {"question": "Which Amazon device helps control smart home devices?", "answer": "echo"},
+    {"question": "What is the name of Amazon's cashier-less stores?", "answer": "amazon go"}
 ]
 
 def get_random_questions():
