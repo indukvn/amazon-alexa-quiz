@@ -19,7 +19,6 @@ questions_pool = [
     {"question": "Which company did Amazon acquire in 2017 for $13.7 billion?", "answer": "whole foods"},
     {"question": "What is the main color of Amazon's logo?", "answer": "Orange"},
     {"question": "What is the name of Amazon's AI-powered recommendation algorithm?", "answer": "a9"},
-    {"question": "Which day is Amazon's biggest annual sales event?", "answer": "prime day"},
     {"question": "What is the name of Amazon's charity donation program?", "answer": "smile"},
     {"question": "What is the name of Amazon's online game streaming platform?", "answer": "twitch"},
     {"question": "Which Amazon warehouse robotics company was acquired in 2012?", "answer": "kiva"},
