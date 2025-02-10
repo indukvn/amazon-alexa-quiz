@@ -74,7 +74,7 @@
         .bronze { color: #CD7F32; font-size: 18px; font-weight: bold; transform: scale(1.02); }
     </style>
     <script>
-        let username = "", score = 0, correctAnswers = 0, wrongAnswers = 0, questionIndex = 0, questions = [], gameFinished = false;
+        let username = "", score = 0, correctAnswers = 0, wrongAnswers = 0, unanswered = 0, questionIndex = 0, questions = [], timer;
 
         function showNameInput() {
             document.body.innerHTML = `
@@ -94,7 +94,6 @@
                 alert("Please enter a name!");
                 return;
             }
-            gameFinished = false; // Reset game completion flag
             document.body.innerHTML = `
                 <h2>Amazon Quiz 🎤</h2>
                 <div class="container">
@@ -102,6 +101,7 @@
                     <input type="text" id="answerInput" placeholder="Type your answer here">
                     <button onclick="checkAnswer()">Submit Answer</button>
                     <button onclick="fetchScores()">View Leaderboard</button>
+                    <p id="timer"></p>
                 </div>
                 <div class="leaderboard" id="leaderboard">
                     <h3>Leaderboard 🏆</h3>
@@ -122,45 +122,59 @@
                 endQuiz();
                 return;
             }
+            clearInterval(timer); // Clear any previous timers
             document.getElementById("question").innerText = questions[questionIndex].question;
             document.getElementById("answerInput").value = "";
-            speak(questions[questionIndex].question);
+
+            startTimer(); // Start the 10-second timer
         }
 
-        function speak(text, callback) {
-            let speech = new SpeechSynthesisUtterance(text);
-            speech.lang = "en-US";
-            speech.voice = window.speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("alexa")) || window.speechSynthesis.getVoices()[0];
-
-            speech.onend = () => {
-                if (callback) callback();
-            };
-
-            window.speechSynthesis.speak(speech);
+        function startTimer() {
+            let timeLeft = 10; // 10 seconds to answer
+            const timerElement = document.getElementById("timer");
+            timerElement.innerText = `Time left: ${timeLeft} seconds`;
+            timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    markUnanswered(); // Automatically mark the question as unanswered and move to the next
+                } else {
+                    timerElement.innerText = `Time left: ${timeLeft} seconds`;
+                }
+            }, 1000);
         }
 
         function checkAnswer() {
             let userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+            if (!userAnswer) {
+                alert("Please enter an answer or wait for the timer to skip.");
+                return; // Prevent advancing the question if no input is given
+            }
+
+            clearInterval(timer); // Stop the timer once a valid answer is submitted
             let correctAnswer = questions[questionIndex].answer.toLowerCase();
 
             if (userAnswer === correctAnswer) {
                 score += 20;
                 correctAnswers++;
-                questionIndex++;
-                setTimeout(displayQuestion, 150);
             } else {
-                score -= 5;
+                score -= 5; // Negative marking for wrong answers
                 wrongAnswers++;
-                speak(`Wrong! The correct answer is: ${correctAnswer}`, () => {
-                    questionIndex++;
-                    setTimeout(displayQuestion, 150);
-                });
             }
+            questionIndex++;
+            setTimeout(displayQuestion, 150);
+        }
+
+        function markUnanswered() {
+            unanswered++; // Increment unanswered count
+            questionIndex++; // Move to the next question
+            displayQuestion();
         }
 
         function endQuiz() {
-            gameFinished = true; // Mark game as finished to prevent duplicate scores
-            speak(`Game Over! You scored ${score} points with ${correctAnswers} correct and ${wrongAnswers} wrong answers.`, saveScore);
+            clearInterval(timer); // Clear any active timer
+            alert(`Game Over! You scored ${score} points.\nCorrect: ${correctAnswers}\nWrong: ${wrongAnswers}\nUnanswered: ${unanswered}`);
+            saveScore();
         }
 
         function saveScore() {
@@ -187,10 +201,7 @@
             });
         }
 
-        window.onload = function () {
-            setTimeout(() => window.speechSynthesis.getVoices()); // Preload voices
-            showNameInput();
-        };
+        window.onload = showNameInput;
     </script>
 </head>
 <body>
