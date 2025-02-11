@@ -130,7 +130,7 @@
         }
 
         function startTimer() {
-            let timeLeft = 10; // 10 seconds to answer
+            let timeLeft = 15; // 10 seconds to answer
             const timerElement = document.getElementById("timer");
             timerElement.innerText = `Time left: ${timeLeft} seconds`;
             timer = setInterval(() => {
@@ -141,7 +141,7 @@
                 } else {
                     timerElement.innerText = `Time left: ${timeLeft} seconds`;
                 }
-            }, 1000);
+            }, 1500);
         }
 
         function checkAnswer() {
