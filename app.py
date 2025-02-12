@@ -6,7 +6,7 @@ SCORES_FILE = "player_scores.json"
 
 questions_pool = [
     {"question": "What year was Amazon founded?", "answer": "1994"},
-    {"question": "Who is the CEO of Amazon?", "answer": "andy jassy"},
+    {"question": "Who is the current CEO of Amazon?", "answer": "andy jassy"},
     {"question": "What is the name of Amazon's voice assistant?", "answer": "alexa"},
     {"question": "What is Amazon's cloud computing service called?", "answer": "aws"},
     {"question": "Where is Amazon's headquarters located?", "answer": "seattle"},
